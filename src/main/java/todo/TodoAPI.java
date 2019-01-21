@@ -1,8 +1,8 @@
 package todo;
 
-import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,37 +11,33 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class TodoAPI {
-	private final AtomicInteger counter = new AtomicInteger();
-
-	private ArrayList<TodoItem> todos = new ArrayList<TodoItem>();
+	@Autowired
+	private TodoItemRepository todosRepository;
 
 	TodoAPI() {
-		TodoItem starting_item = new TodoItem(counter.incrementAndGet(), "My first todo task", true);
-		todos.add(starting_item);
 	}
 
 	@RequestMapping(value = "/todos", method = RequestMethod.GET)
-	public ArrayList<TodoItem> todo_list() {
-		return todos;
+	public List<TodoItem> todo_list() {
+		return todosRepository.findAll();
 	}
 
 	@RequestMapping(value = "/todos", method = RequestMethod.POST)
 	public TodoItem add_todo(@RequestBody TodoItem new_todo) {
-		new_todo.setId(counter.incrementAndGet());
-		todos.add(new_todo);
+		new_todo = todosRepository.save(new_todo);
 
 		return new_todo;
 	}
 
 	@RequestMapping(value = "/todos/{id}", method = RequestMethod.PUT)
-	public TodoItem update_todo(@PathVariable int id, @RequestBody TodoItem todo) {
-		todos.set(id - 1, todo);
+	public TodoItem update_todo(@PathVariable String id, @RequestBody TodoItem todo) {
+		todo = todosRepository.save(todo);
 
 		return todo;
 	}
 
 	@RequestMapping(value = "/todos/{id}", method = RequestMethod.DELETE)
-	public void remove_todo(@PathVariable int id) {
-		todos.remove(id - 1);
+	public void remove_todo(@PathVariable String id) {
+		todosRepository.deleteById(id);
 	}
 }

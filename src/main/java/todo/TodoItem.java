@@ -1,22 +1,24 @@
 package todo;
 
+import org.springframework.data.annotation.Id;
+
 public class TodoItem {
 
-    private int id;
+    @Id
+    private String id;
     private final String title;
     private boolean complete;
 
-    public TodoItem(int id, String title, boolean complete) {
-        this.id = id;
+    public TodoItem(String title, boolean complete) {
         this.title = title;
         this.complete = complete;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
